@@ -1,31 +1,31 @@
 package fr.diginamic;
-
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class Main {
+    public static void main(String[] args) {
 
-    public static void main(String[] args) throws NoSuchAlgorithmException {
-        // Exemple de prénoms
-        String[] prenoms = {"Sarah", "Dmitri", "Julien", "Angeline", "Cyril", "Sandrine", "Tommy", "Daris", "Mathieu", "Laurence","Robin", "Nuno"};
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        for (String prenom : prenoms) {
-            String hash = getHash(prenom);
-            System.out.println(prenom + " -> " + hash);
-        }
-    }
+        // Hash de "toto"
+        String hash1 = encoder.encode("toto");
+        System.out.println("Hash de 'toto' : " + hash1);
 
-    public static String getHash(String input) throws NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
-        // Conversion en hexadécimal
-        StringBuilder hexString = new StringBuilder();
-        for (byte b : hash) {
-            String hex = Integer.toHexString(0xff & b);
-            if(hex.length() == 1) hexString.append('0');
-            hexString.append(hex);
-        }
-        return hexString.toString();
+        // Hasher une seconde fois
+        String hash2 = encoder.encode("toto");
+        System.out.println("Hash de 'toto' une seconde fois : " + hash2);
+
+        // Vérifier si les hashes sont identiques
+        System.out.println("Hash1 equals Hash2 ? " + hash1.equals(hash2));
+
+        // Déclaration de deux variables
+        String totohaseh = encoder.encode("toto");
+        String newotohaseh = encoder.encode("toto");
+
+        System.out.println("\nRésultats matches :");
+        System.out.println(encoder.matches("toto", totohaseh));     // true
+        System.out.println(encoder.matches("toto", newotohaseh));  // true
+
+        // Vérification matches avec mauvais mot de passe
+        System.out.println(encoder.matches("tata", totohaseh));    // false
     }
 }
