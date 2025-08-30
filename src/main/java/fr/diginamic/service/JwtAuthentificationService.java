@@ -11,8 +11,8 @@ import java.util.Date;
 @Service
 public class JwtAuthentificationService {
 
-    private final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256); // clé générée aléatoirement
-    private static final long EXPIRATION_TIME = 60 * 60 * 1000; // 1 heure
+    private final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private static final long EXPIRATION_TIME = 60 * 60 * 1000; // 1h
 
     public String generateToken(String username) {
         return Jwts.builder()
@@ -23,7 +23,19 @@ public class JwtAuthentificationService {
                 .compact();
     }
 
-    public String validateTokenAndGetUsername(String token) {
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(SECRET_KEY)
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public String getUsernameFromToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY)
                 .build()
